@@ -1,0 +1,67 @@
+name: Build and push image to container registry
+
+on:
+  workflow_call:
+    inputs:
+
+      REGISTRY:
+        type: string
+        required: false
+        default: ghcr.io
+      USERNAME:
+        type: string
+        required: false
+        default: ${{github.ACTOR}}
+      IMAGE_NAME:
+        type: string
+        required: false
+        default: ${{github.event.repository.name}}
+
+    secrets:
+      REGISTRY_TOKEN:
+        required: true
+
+    env:
+      IMAGE_TAG: ${{ github.run_number }}
+
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: checkout branch
+      uses: actions/checkout@v4
+
+    - name: set up jdk 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+
+    - name: build gradle
+      run: ./gradlew build
+
+    - name: build container image
+      run: docker build -t ${{ inputs.REGISTRY }}/${{ inputs.USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+
+    - name: list images
+      run: docker images
+
+    - name: login into container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ inputs.REGISTRY }}
+        username: ${{ inputs.USERNAME }}
+        password: ${{ secrets.REGISTRY_TOKEN }}
+
+    - name: push image to container registry
+      value: docker push ${{ inputs.REGISTRY }}/${{ inputs.USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+
+
