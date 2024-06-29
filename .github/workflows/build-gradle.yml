@@ -21,8 +21,8 @@ on:
       REGISTRY_TOKEN:
         required: true
 
-    env:
-      IMAGE_TAG: ${{ github.run_number }}
+env:
+  IMAGE_TAG: ${{ github.run_number }}
 
   workflow_dispatch:
 jobs:
