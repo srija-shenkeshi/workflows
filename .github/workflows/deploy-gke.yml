@@ -1,0 +1,32 @@
+name: deploy container image to gke
+
+on:
+  workflow_call:
+
+env:
+  CLUSTER_NAME: srija-gke-cluster
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: GCP login
+        uses: 
+        with:
+
+          # add "--public-fqdn" if private cluster
+      - name: Set the target Azure Kubernetes Service (AKS) cluster.
+        run: |
+          az aks get-credentials \
+            --resource-group ${{ env.CLUSTER_RESOURCE_GROUP }} \
+            --name ${{ env.CLUSTER_NAME }} --overwrite-existing
