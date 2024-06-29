@@ -61,7 +61,7 @@ jobs:
         password: ${{ secrets.REGISTRY_TOKEN }}
 
     - name: push image to container registry
-      value: docker push ${{ inputs.REGISTRY }}/${{ inputs.USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+      run: docker push ${{ inputs.REGISTRY }}/${{ inputs.USERNAME }}/${{ inputs.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
 
 
 
